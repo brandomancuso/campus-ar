@@ -34,6 +34,7 @@ public class LocationConverterTest {
             .infos(infos)
             .build();
         Mockito.doReturn(infoEntity).when(converter).convertInfoDtoToEntity(Mockito.argThat(e -> dto.getInfos().contains(e)));
+        Mockito.doNothing().when(infoEntity).setLocation(Mockito.any(LocationEntity.class));
         LocationEntity actual = converter.toEntity(dto);
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
@@ -41,6 +42,7 @@ public class LocationConverterTest {
         assertEquals(expected.getLongitude(), actual.getLongitude());
         assertEquals(expected.getInfos().size(), actual.getInfos().size());
         Mockito.verify(converter, Mockito.times(infos.size())).convertInfoDtoToEntity(Mockito.argThat(e -> dto.getInfos().contains(e)));
+        Mockito.verify(infoEntity, Mockito.times(infos.size())).setLocation(Mockito.any(LocationEntity.class));
     }
 
     @Test

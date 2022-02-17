@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +44,7 @@ public class RestApiController {
             .collect(Collectors.toList());
     }
 
+    @Transactional
     @PostMapping("/location")
     public ResponseEntity<?> addLocation(@RequestBody LocationDto location) {
         LocationEntity entity = converter.toEntity(location, LocationConverter.ENTITY_CODE);
@@ -50,12 +52,14 @@ public class RestApiController {
         return ResponseEntity.ok().build();
     }
 
+    @Transactional
     @DeleteMapping("/location/{locationId}")
     public ResponseEntity<?> deleteLocation(@PathVariable Integer locationId) {
         locationRepo.findById(locationId).ifPresent(entity -> locationRepo.delete(entity));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @Transactional
     @PostMapping("/location/list")
     public ResponseEntity<?> addLocationList(@RequestBody LocationListDto location) {
         List<LocationEntity> locationEntities = location.getLocations().stream()

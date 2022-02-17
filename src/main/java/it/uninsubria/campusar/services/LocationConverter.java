@@ -1,6 +1,8 @@
 package it.uninsubria.campusar.services;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -32,16 +34,20 @@ public class LocationConverter implements EntityDtoConverter<LocationEntity, Loc
 
     @Override
     public LocationEntity toEntity(LocationDto dto) {
-        List<LocationInfoEntity> infos = dto.getInfos().stream()
+        List<LocationInfoEntity> infos = Optional.ofNullable(dto.getInfos())
+            .map(infoDtoList -> infoDtoList.stream()
             .map(this::convertInfoDtoToEntity)
-            .collect(Collectors.toList());
-        return LocationEntity.builder()
+            .collect(Collectors.toList()))
+            .orElse(Collections.emptyList());
+        LocationEntity entity = LocationEntity.builder()
             .id(dto.getId())
             .name(dto.getName())
             .latitude(dto.getLatitude())
             .longitude(dto.getLongitude())
             .infos(infos)
             .build();
+        entity.getInfos().forEach(info -> info.setLocation(entity));
+        return entity;
     }
 
     protected LocationInfoEntity convertInfoDtoToEntity(LocationInfoDto infoDto) {

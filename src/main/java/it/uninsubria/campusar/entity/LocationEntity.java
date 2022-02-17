@@ -2,6 +2,7 @@ package it.uninsubria.campusar.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,6 +42,6 @@ public class LocationEntity implements PersistenceEntity{
     @Column
     private String image;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LocationInfoEntity> infos;
 }
