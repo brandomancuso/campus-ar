@@ -15,7 +15,6 @@ let markers = [];
 function renderPlaces(places) {
 	let ar_doc = arview.contentDocument;
     let a_scene = ar_doc.getElementById("scene");
-
     for(let i = 0; i < places.length; i++) {
         // add place icon
         const icon = ar_doc.createElement("a-image");
@@ -23,7 +22,7 @@ function renderPlaces(places) {
         icon.setAttribute("width", "5.5");
         icon.setAttribute("height", "8");
         icon.setAttribute("name", places[i].name);
-        icon.setAttribute("src", "resources/images/map-marker.png");
+        icon.setAttribute("src", "/images/map-marker.png");
         icon.setAttribute("look-at", "[gps-camera]");
         icon.setAttribute("clickhandler", "");
         icon.setAttribute("id", i + "_icon");
@@ -66,10 +65,10 @@ function highlight(index) {
 		let element_icon = arview.contentDocument.getElementById(i.toString() + "_icon");
 		let element_name = arview.contentDocument.getElementById(i.toString() + "_name");
 		if(i == index){
-			element_icon.setAttribute("src","resources/images/map-marker-highlight.png");
+			element_icon.setAttribute("src","/images/map-marker-highlight.png");
 			element_name.setAttribute("text","value: " + markers[i].name + "; font: https://cdn.aframe.io/fonts/Monoid.fnt; width: 30; align: center; color: #ff000a");
 		} else {
-			element_icon.setAttribute("src","resources/images/map-marker.png");
+			element_icon.setAttribute("src","/images/map-marker.png");
 			element_name.setAttribute("text","value: " + markers[i].name + "; font: https://cdn.aframe.io/fonts/Monoid.fnt; width: 30; align: center; color: #086e25");
 		}
 	}
@@ -77,19 +76,18 @@ function highlight(index) {
 
 arview.contentWindow.onload = () => {
 	let httpReq = new XMLHttpRequest();
-	httpReq.open("GET", "resources/places.json");
+	httpReq.open("GET", "/api/places");
 	httpReq.send(null);
 	httpReq.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			let json = httpReq.response;
-			let obj = JSON.parse(json);
-			let places = obj.Campus;
+			let places = JSON.parse(json);
 			for(let i = 0; i < places.length; i++){
-				markers.push(new Marker( places[i].name, places[i].coords.latitude, places[i].coords.longitude));
+				markers.push(new Marker(places[i].name, places[i].latitude, places[i].longitude));
 			}
 			renderPlaces(markers);
 			loadSearchbarItems(markers);
-			window.db = obj;
+			window.db = places;
 		}
 	};
 }
